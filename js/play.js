@@ -334,18 +334,41 @@ function updatePgn() {
 
 // update Eddies
 function updateEddiesOnGameEnd(result) {
-  console.log("Game ended. Updating Eddies for result:", result);
+  let reward = 0;
+  let resultType = '';
+
   if (result === '1-0') {
-    eddiesCount += (guiSide === 0) ? 100 : 10;
+    resultType = guiSide === 0 ? 'W' : 'L';
   } else if (result === '0-1') {
-    eddiesCount += (guiSide === 1) ? 100 : 10;
-  } else if (result === '1/2-1/2' || result === 'Stalemate') {
-    eddiesCount += 50;
+    resultType = guiSide === 1 ? 'W' : 'L';
+  } else if (result.includes('1/2-1/2') || result === 'Stalemate') {
+    resultType = 'D';
   } else {
     console.log("Unexpected result:", result);
     return; // Don't update for unexpected results
   }
-  console.log("New Eddies count:", eddiesCount);
+
+  switch (botName) {
+    case 'NIBBLESPLZ':
+      reward = resultType === 'W' ? 10 : resultType === 'D' ? 5 : 1;
+      break;
+    case 'BORG':
+      reward = resultType === 'W' ? 50 : resultType === 'D' ? 25 : 5;
+      break;
+    case 'TYG3R':
+      reward = resultType === 'W' ? 100 : resultType === 'D' ? 50 : 10;
+      break;
+    case 'ELJEFE':
+      reward = resultType === 'W' ? 200 : resultType === 'D' ? 100 : 20;
+      break;
+    case 'SAKARUNNER':
+      reward = resultType === 'W' ? 400 : resultType === 'D' ? 200 : 40;
+      break;
+  }
+
+  eddiesCount += reward;
+  console.log(`${resultType} against ${botName}. Eddies earned: ${reward}`);
+  console.log(`New Eddies count: ${eddiesCount}`);
   document.getElementById('eddiesCount').textContent = eddiesCount;
 }
 
