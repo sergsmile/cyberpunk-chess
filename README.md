@@ -12,6 +12,7 @@ Play chess against bots with a cyberpunk aesthetic. Based on the [Wukong JS ches
 - Multiple difficulty levels from beginner to advanced
 - Piece square tables, engine depth, opening book, and quiescence variance
 - Preem cyberpunk themed boards and pieces
+- Glorious [IBM Plex](https://github.com/IBM/plex)
 
 ## Getting Started
 

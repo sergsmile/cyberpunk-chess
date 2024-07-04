@@ -18,6 +18,11 @@
     <meta name="description" content="cyberpunk chess bots - javascript UCI chess engine - Wukong JS by Code Monkey King">
     <meta name="keywords" content="cyberpunk chess bots - UCI chess engine in javascript that runs in both browser and Arena GUI - Wukong JS by Code Monkey King">
 
+    <!-- Preload -->
+    <link rel="preload" href="css/bootstrap.min.css" as="style">
+    <link rel="preload" href="css/custom.css" as="style">
+    <link rel="preload" href="wukong.js" as="script">
+    
     <!-- Vercel Analytics -->
     <!-- <script defer src="/_vercel/insights/script.js"></script> -->
     
@@ -27,8 +32,9 @@
     <!-- Bootstrap JS  -->
     <script src="js/bootstrap.bundle.min.js"></script>
 
-    <!-- IBM Plex font -->
+    <!-- IBM Plex and custom styling -->
     <link rel="stylesheet" href="css/custom.css">
+    
     <title>Cyberpunk Chess</title>
   </head>
   <body class="img-fluid bg-cover text-center d-flex justify-content-center align-items-center" style="height: 100vh;">
@@ -41,23 +47,23 @@
       </button>
       <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="width: 420px; position: absolute; z-index: 1000; border-radius: 0; background-color: black;">
         <li><button class="dropdown-item" style="border-radius: 0; display: flex; align-items: center; color: white; background-color: black; border-bottom: 1px solid white;" onclick="setBot('NIBBLESPLZ'); newGame();">
-          <img src="img/nibbles.webp" class="ml-2" style="width: 50px; margin-right: 20px;">
+          <img src="img/nibbles.webp" loading="lazy" class="ml-2" style="width: 50px; margin-right: 20px;">
           NIBBLESPLZ (500)
         </button></li>
         <li><button class="dropdown-item" style="border-radius: 0; display: flex; align-items: center; color: white; background-color: black; border-bottom: 1px solid white;" onclick="setBot('BORG'); newGame();">
-          <img src="img/borg.webp" class="ml-2" style="width: 50px; margin-right: 20px;">
+          <img src="img/borg.webp" loading="lazy" class="ml-2" style="width: 50px; margin-right: 20px;">
           BORG (700)
         </button></li>
         <li><button class="dropdown-item" style="border-radius: 0; display: flex; align-items: center; color: white; background-color: black; border-bottom: 1px solid white;" onclick="setBot('TYG3R'); newGame();">
-          <img src="img/tyger.webp" class="ml-2" style="width: 50px; margin-right: 20px;">
+          <img src="img/tyger.webp" loading="lazy" class="ml-2" style="width: 50px; margin-right: 20px;">
           TYG3R (1000)
         </button></li>
         <li><button class="dropdown-item" style="border-radius: 0; display: flex; align-items: center; color: white; background-color: black; border-bottom: 1px solid white;" onclick="setBot('ELJEFE'); newGame();">
-          <img src="img/jefe.webp" class="ml-2" style="width: 50px; margin-right: 20px;">
+          <img src="img/jefe.webp" loading="lazy" class="ml-2" style="width: 50px; margin-right: 20px;">
           ELJEFE (1200)
         </button></li>
         <li><button class="dropdown-item" style="border-radius: 0; display: flex; align-items: center; color: white; background-color: black;" onclick="setBot('SAKARUNNER'); newGame();">
-          <img src="img/saka.webp" class="ml-2" style="width: 50px; margin-right: 20px;">
+          <img src="img/saka.webp" loading="lazy" class="ml-2" style="width: 50px; margin-right: 20px;">
           SAKARUNNER (1700)
         </button></li>
       </ul>
