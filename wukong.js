@@ -11,6 +11,8 @@
  ===============================================
 \************************************************/
 
+var updateEddiesCallback = null;
+
 // chess engine object
 var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
 
@@ -23,7 +25,7 @@ var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
   \****************************/
   
   // chess engine version
-  const version = '1.5';
+  const version = '1.5a';
   const elo = '1920';
 
   // sides to move  
@@ -746,7 +748,7 @@ var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
     hashKey ^= sideKey;
 
     // return illegal move if king is left in check 
-    if (isSquareAttacked((side == white) ? kingSquare[side ^ 1] : kingSquare[side ^ 1], side)) {
+    if (isSquareAttacked(kingSquare[side ^ 1], side)) {
       takeBack();
       return 0;
     } else return 1;
@@ -1102,7 +1104,7 @@ var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
     for (let square = 0; square < 128; square++) {
       if ((square & 0x88) == 0) {
         let originalValue = pst[phase][piece][square];
-        let randomFactor = 0.5 + Math.random() * 0.5; // random factor between 0.5 and 1
+        let randomFactor = 0.3 + Math.random() * 2.7; // random factor between 0.3 and 3
         pst[phase][piece][square] = Math.round(originalValue * randomFactor);
         }
       }
@@ -1717,6 +1719,28 @@ var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
 
     return alpha;
   }
+
+  function isGameOver() {
+    let legalMoves = generateLegalMoves();
+    
+    if (legalMoves.length === 0) {
+      return isSquareAttacked(kingSquare[side], side ^ 1) ? "checkmate" : "stalemate";
+    }
+    
+    if (isRepetition() >= 3) {
+      return "threefold";
+    }
+    
+    if (isMaterialDraw()) {
+      return "insufficient";
+    }
+    
+    if (fifty >= 100) {
+      return "fifty";
+    }
+    
+    return false;
+  }
   
   // search position for the best move
   function searchPosition(depth) {
@@ -1788,8 +1812,29 @@ var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
     }
   
     let bestMove = (timing.stopped == 1) ? lastBestMove : pvTable[0];
-    console.log('bestmove ' + moveToString(bestMove));
+  
+    let gameOverStatus = isGameOver();
+    if (!gameOverStatus) {
+      console.log('bestmove ' + moveToString(bestMove));
+    } else {
+      console.log('Game over: ' + gameOverStatus + '. No best move to make.');
+      // Call a new function to handle game over
+      handleGameOver(gameOverStatus);
+    }
+    
     return bestMove;
+  }
+
+  function handleGameOver(status) {
+    if (updateEddiesCallback) {
+      let result;
+      if (status === "checkmate") {
+        result = side === 0 ? 'loss' : 'win';
+      } else if (status === "stalemate" || status === "threefold" || status === "fifty" || status === "insufficient") {
+        result = 'draw';
+      }
+      updateEddiesCallback(result, side);
+    }
   }
 
 
@@ -2293,7 +2338,12 @@ var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
     setHashSize: function(Mb) { setHashSize(Mb); },
 
     // debugging (run any internal engine function)
-    debug: function() { debug(); }
+    debug: function() { debug(); },
+
+    // In the engine's public API
+    setUpdateEddiesCallback: function(callback) {
+      updateEddiesCallback = callback;
+    }
   }
 }
 
