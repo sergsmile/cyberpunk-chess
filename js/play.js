@@ -377,6 +377,7 @@ function setPromotion(piece) {
 function setBot(bot) {
   botName = bot;
   document.getElementById('current-bot-image').src = bots[bot].image;
+  document.querySelector('.bot-name').textContent = bot; // Update bot name
   fixedTime = bots[bot].time;
   fixedDepth = bots[bot].depth;
   book = JSON.parse(JSON.stringify(bots[bot].book));
