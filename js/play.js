@@ -57,6 +57,14 @@ function dragOver(event, square) {
 
 // drop piece handler
 function dropPiece(event, square) {
+  let piece = engine.getPiece(userSource);
+  let pieceColor = piece & 0x8 ? 1 : 0; // 1 for black, 0 for white
+  
+  if (pieceColor !== guiSide) {
+    console.log("You can't move the opponent's pieces!");
+    return;
+  }
+
   userTarget = square;
   promotedPiece = (engine.getSide() ? (promotedPiece + 6): promotedPiece)
   let valid = validateMove(userSource, userTarget, promotedPiece);  
