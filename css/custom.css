@@ -1,14 +1,10 @@
-/* IBM Plex Font Declarations */
-@font-face {
-  font-family: 'IBM Plex Mono';
-  font-style: normal;
+/* Custom Styles */
+body, .btn, .dropdown-item, .eddies-counter {
+  font-family: 'IBM Plex Mono', monospace, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   font-weight: 700;
-  src: url('../font/IBMPlexMono-Bold.woff2') format('woff2');
 }
 
-/* Custom Styles */
 body {
-  font-family: 'IBM Plex Mono', monospace, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background: black;
   color: white;
   overflow-x: hidden;
@@ -17,23 +13,15 @@ body {
   height: 100%;
 }
 
-.btn {
-  font-family: 'IBM Plex Mono', monospace, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-size: 20px;
-}
-
-.dropdown-item {
-  font-family: 'IBM Plex Mono', monospace, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+.btn, .dropdown-item, .eddies-counter {
   font-size: 20px;
 }
 
 .eddies-counter {
-  font-family: 'IBM Plex Mono', monospace, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   color: gold;
   background-color: transparent;
   padding: 6px 12px;
   border-radius: 0;
   display: flex;
   align-items: center;
-  font-size: 20px;
 }
