@@ -319,7 +319,7 @@ function updateEddies(result, engineSide) {
     let eddiesIncrease = 0;
     
     switch (botName) {
-      case 'NIBBLESPLZ':
+      case 'SPHYNX':
         eddiesIncrease = 100;
         break;
       case 'BORG':
@@ -331,7 +331,7 @@ function updateEddies(result, engineSide) {
       case 'ELJEFE':
         eddiesIncrease = 500;
         break;
-      case 'SAKARUNNER':
+      case 'NETRUNNER':
         eddiesIncrease = 700;
         break;
     }
@@ -407,4 +407,4 @@ function setBot(bot) {
 }
 
 // Set Wukong as default bot
-setBot('NIBBLESPLZ');
+setBot('SPHYNX');

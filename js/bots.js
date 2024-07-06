@@ -1,5 +1,5 @@
 const bots = {
-  'NIBBLESPLZ': {
+  'SPHYNX': {
     image: 'img/nibbles.webp',
     description: '',
     time: 0,
@@ -46,7 +46,7 @@ const bots = {
     selectColor: 'orange',
   },
   
-  'SAKARUNNER': {
+  'NETRUNNER': {
     image: 'img/saka.webp',
     description: '',
     time: 0,

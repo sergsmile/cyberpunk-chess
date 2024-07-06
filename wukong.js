@@ -1564,7 +1564,7 @@ var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
     if ((searchPly && isRepetition()) || fifty >= 100) return 0;
     
     // toggling quiescence search
-    if (depth <= 0 && botName === 'NIBBLESPLZ' || depth <= 0 && botName === 'BORG') {
+    if (depth <= 0 && botName === 'SPHYNX' || depth <= 0 && botName === 'BORG') {
         nodes++;
         return evaluate();
     } else if (depth == 0) {
@@ -2120,11 +2120,11 @@ var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
           if ((square & 0x88) == 0)
             chessBoard += 
               '<td align="center" id="' + square + 
-              '" bgcolor="' + (botName === 'NIBBLESPLZ' ? (((file + rank) % 2) ? '#ACE1AF' : '#F5F5F5') : 
+              '" bgcolor="' + (botName === 'SPHYNX' ? (((file + rank) % 2) ? '#ACE1AF' : '#F5F5F5') : 
                               botName === 'BORG' ? (((file + rank) % 2) ? '#E09540' : '#FFFFF0') : 
                               botName === 'TYG3R' ? (((file + rank) % 2) ? '#FF69B4' : '#FFB6C1') : 
                               botName === 'ELJEFE' ? (((file + rank) % 2) ? '#B284BE' : '#FFF0F5') : 
-                              botName === 'SAKARUNNER' ? (((file + rank) % 2) ? '#BCBCBC' : '#FFFFFF') : 
+                              botName === 'NETRUNNER' ? (((file + rank) % 2) ? '#BCBCBC' : '#FFFFFF') : 
                               (((file + rank) % 2) ? '#ACE1AF' : '#F5F5F5')) +
               '" width="' + CELL_WIDTH + 'px" height="' + CELL_HEIGHT +  'px" ' +
               ' onclick="tapPiece(this.id)" ' + 
@@ -2148,7 +2148,7 @@ var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
           var square = row * 16 + col;
           if ((square & 0x88) == 0) {
             let pieceImage;
-            if (botName === 'NIBBLESPLZ') {
+            if (botName === 'SPHYNX') {
               pieceImage = 'img/nibbles-set/' + (board[square]) + '.webp';
             } else if (botName === 'BORG') {
               pieceImage = 'img/borg-set/' + (board[square]) + '.webp';
@@ -2156,7 +2156,7 @@ var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
               pieceImage = 'img/tyger-set/' + (board[square]) + '.webp';
             } else if (botName === 'ELJEFE') {
               pieceImage = 'img/jefe-set/' + (board[square]) + '.webp';
-            } else if (botName === 'SAKARUNNER') {
+            } else if (botName === 'NETRUNNER') {
               pieceImage = 'img/saka-set/' + (board[square]) + '.webp';
             } else {
               pieceImage = 'img/nibbles-set/' + (board[square]) + '.webp'; // set default images
