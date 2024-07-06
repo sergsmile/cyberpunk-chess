@@ -9,6 +9,7 @@ export default function middleware(req) {
       'X-DNS-Prefetch-Control': 'on',
       'Strict-Transport-Security':
         'max-age=31536000; includeSubDomains; preload',
+      'Cache-Control': 'public, max-age=31536000, immutable',
     },
   });
 }
