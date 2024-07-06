@@ -33,3 +33,13 @@ body {
   display: flex;
   align-items: center;
 }
+
+@keyframes goldGlow {
+  0% { text-shadow: 0 0 5px gold, 0 0 10px gold; }
+  50% { text-shadow: 0 0 20px gold, 0 0 30px gold; }
+  100% { text-shadow: 0 0 5px gold, 0 0 10px gold; }
+}
+
+.gold-glow {
+  animation: goldGlow 2s ease-in-out;
+}

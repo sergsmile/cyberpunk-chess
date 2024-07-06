@@ -320,19 +320,19 @@ function updateEddies(result, engineSide) {
     
     switch (botName) {
       case 'NIBBLESPLZ':
-        eddiesIncrease = result === 'win' ? 10 : result === 'draw' ? 5 : 1;
+        eddiesIncrease = 100;
         break;
       case 'BORG':
-        eddiesIncrease = result === 'win' ? 50 : result === 'draw' ? 25 : 5;
+        eddiesIncrease = 200;
         break;
       case 'TYG3R':
-        eddiesIncrease = result === 'win' ? 100 : result === 'draw' ? 50 : 10;
+        eddiesIncrease = 400;
         break;
       case 'ELJEFE':
-        eddiesIncrease = result === 'win' ? 200 : result === 'draw' ? 100 : 20;
+        eddiesIncrease = 500;
         break;
       case 'SAKARUNNER':
-        eddiesIncrease = result === 'win' ? 500 : result === 'draw' ? 250 : 50;
+        eddiesIncrease = 700;
         break;
     }
     
@@ -340,8 +340,20 @@ function updateEddies(result, engineSide) {
     console.log(`Eddies increased by ${eddiesIncrease}. Total Eddies: ${eddiesCount}`);
     
     let eddiesCountElement = document.getElementById('eddiesCount');
+    let eddiesLabelElement = document.getElementById('eddiesLabel');
+    
     if (eddiesCountElement) {
       eddiesCountElement.textContent = eddiesCount.toString();
+      
+      // Apply the glowing effect to both label and count
+      eddiesLabelElement.classList.add('gold-glow');
+      eddiesCountElement.classList.add('gold-glow');
+      
+      // Remove the class after the animation completes
+      setTimeout(() => {
+        eddiesLabelElement.classList.remove('gold-glow');
+        eddiesCountElement.classList.remove('gold-glow');
+      }, 2000);
     }
   }
 }
