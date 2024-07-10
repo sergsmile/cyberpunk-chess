@@ -1,6 +1,6 @@
 const bots = {
   'SPHYNX': {
-    image: 'img/nibbles.webp',
+    image: 'img/sphynx.webp',
     description: '',
     time: 0,
     depth: 1,
@@ -29,7 +29,7 @@ const bots = {
       'd2d4 d7d5',
       'c2c4 c7c5'
     ],
-    selectColor: 'blue',
+    selectColor: 'pink',
   },
   
   'ELJEFE': {
@@ -47,7 +47,7 @@ const bots = {
   },
   
   'NETRUNNER': {
-    image: 'img/saka.webp',
+    image: 'img/runner.webp',
     description: '',
     time: 0,
     depth: 4,

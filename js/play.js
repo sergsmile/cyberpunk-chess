@@ -57,14 +57,6 @@ function dragOver(event, square) {
 
 // drop piece handler
 function dropPiece(event, square) {
-  let piece = engine.getPiece(userSource);
-  let pieceColor = piece & 0x8 ? 1 : 0; // 1 for black, 0 for white
-  
-  if (pieceColor !== guiSide) {
-    console.log("You can't move the opponent's pieces!");
-    return;
-  }
-
   userTarget = square;
   promotedPiece = (engine.getSide() ? (promotedPiece + 6): promotedPiece)
   let valid = validateMove(userSource, userTarget, promotedPiece);  
@@ -120,6 +112,18 @@ function validateMove(userSource, userTarget, promotedPiece) {
                    engine.promotedToString(promotedPiece);
 
   let move = engine.moveFromString(moveString);
+
+  // Check if it's a king move attempting a capture
+  if (engine.getPiece(userSource) === engine.PIECE.WHITE_KING && 
+  engine.getPiece(userTarget) !== engine.PIECE.NO_PIECE) {
+  // Verify if it's a legal move using the engine's move generation
+  let legalMoves = engine.generateLegalMoves();
+  if (!legalMoves.some(m => m.move === move)) {
+      // If it's not a legal move, return false without changing the game state
+      return false;
+    }
+  }
+
   return move;
 }
 
@@ -320,24 +324,27 @@ function updateEddies(result, engineSide) {
     
     switch (botName) {
       case 'SPHYNX':
-        eddiesIncrease = 100;
+        eddiesIncrease = 50;
         break;
       case 'BORG':
-        eddiesIncrease = 200;
+        eddiesIncrease = 100;
         break;
       case 'TYG3R':
-        eddiesIncrease = 400;
+        eddiesIncrease = 200;
         break;
       case 'ELJEFE':
-        eddiesIncrease = 500;
+        eddiesIncrease = 250;
         break;
       case 'NETRUNNER':
-        eddiesIncrease = 700;
+        eddiesIncrease = 350;
         break;
     }
     
     eddiesCount += eddiesIncrease;
     console.log(`Eddies increased by ${eddiesIncrease}. Total Eddies: ${eddiesCount}`);
+
+    // Store the updated eddiesCount in local storage
+    localStorage.setItem('eddiesCount', eddiesCount);
     
     let eddiesCountElement = document.getElementById('eddiesCount');
     let eddiesLabelElement = document.getElementById('eddiesLabel');
@@ -353,9 +360,20 @@ function updateEddies(result, engineSide) {
       setTimeout(() => {
         eddiesLabelElement.classList.remove('gold-glow');
         eddiesCountElement.classList.remove('gold-glow');
-      }, 2000);
+      }, 4000);
     }
   }
+}
+
+// Initialize eddiesCount from local storage
+function initEddiesCount() {
+  let storedEddiesCount = localStorage.getItem('eddiesCount');
+  if (storedEddiesCount !== null) {
+    eddiesCount = parseInt(storedEddiesCount, 10);
+  } else {
+    eddiesCount = 0;
+  }
+  document.getElementById('eddiesCount').textContent = eddiesCount.toString();
 }
 
 // download PGN
@@ -371,7 +389,6 @@ function downloadPgn() {
   let header = '';
   if (guiFen) header += '[FEN "' + guiFen + '"]\n';
   header += '[Event "Friendly chess game"]\n';
-  header += '[Site "https://maksimkorzh.github.io/wukongJS/wukong.html"]\n';
   header += '[Date "' + new Date() + '"]\n';
   header += '[White "' + ((userColor == 'White') ? userName : botName) + '"]\n';
   header += '[Black "' + ((userColor == 'Black') ? userName : botName) + '"]\n';
@@ -408,3 +425,6 @@ function setBot(bot) {
 
 // Set Wukong as default bot
 setBot('SPHYNX');
+
+// Call initEddiesCount when the page loads
+document.addEventListener('DOMContentLoaded', initEddiesCount);

@@ -41,5 +41,5 @@ body {
 }
 
 .gold-glow {
-  animation: goldGlow 2s ease-in-out;
+  animation: goldGlow 4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
