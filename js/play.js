@@ -143,7 +143,7 @@ function newGame() {
   guiDepth = 0;
   guiTime = 0;
   guiPv = '';
-  gameResult = '';
+  gameResult = '*';
   userTime = 0;
   allowBook = 1;
   engine.setBoard(engine.START_FEN);
@@ -324,19 +324,19 @@ function updateEddies(result, engineSide) {
     
     switch (botName) {
       case 'SPHYNX':
-        eddiesIncrease = 50;
+        eddiesIncrease = 10;
         break;
-      case 'BORG':
+      case 'B_O_R_G':
         eddiesIncrease = 100;
         break;
       case 'TYG3R':
-        eddiesIncrease = 200;
-        break;
-      case 'ELJEFE':
         eddiesIncrease = 250;
         break;
-      case 'NETRUNNER':
+      case 'EL-JEFE':
         eddiesIncrease = 350;
+        break;
+      case 'NETRUNNER':
+        eddiesIncrease = 600;
         break;
     }
     

@@ -9,7 +9,7 @@ const bots = {
     selectColor: 'yellow'
   },
 
-  'BORG': {
+  'B_O_R_G': {
     image: 'img/borg.webp',
     description: '',
     time: 0,
@@ -32,7 +32,7 @@ const bots = {
     selectColor: 'pink',
   },
   
-  'ELJEFE': {
+  'EL-JEFE': {
     image: 'img/jefe.webp',
     description: '',
     time: 0,

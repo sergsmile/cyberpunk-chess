@@ -1092,7 +1092,7 @@ var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
   // randomize piece square tables
   const originalPst = JSON.parse(JSON.stringify(pst));
   function randomizePieceSquareTables() {
-    console.log("randomizing piece square tables...");
+    console.log("start randomizing opening piece square tables");
     // reset to original values
     Object.keys(pst).forEach(phase => {
       Object.keys(pst[phase]).forEach(piece => {
@@ -1111,7 +1111,7 @@ var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
         }
       }
     }
-    console.log("randomized piece square tables !");
+    console.log("end randomizing opening piece square tables");
   }
   
   // insufficient material detection
@@ -1567,7 +1567,7 @@ var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
     if ((searchPly && isRepetition()) || fifty >= 100) return 0;
     
     // toggling quiescence search
-    if (depth <= 0 && botName === 'SPHYNX' || depth <= 0 && botName === 'BORG') {
+    if (depth <= 0 && botName === 'SPHYNX' || depth <= 0 && botName === 'B_O_R_G') {
         nodes++;
         return evaluate();
     } else if (depth == 0) {
@@ -2124,9 +2124,9 @@ var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
             chessBoard += 
               '<td align="center" id="' + square + 
               '" bgcolor="' + (botName === 'SPHYNX' ? (((file + rank) % 2) ? '#69C96E' : '#96D999') : 
-                              botName === 'BORG' ? (((file + rank) % 2) ? '#9E601A' : '#D38022') : 
+                              botName === 'B_O_R_G' ? (((file + rank) % 2) ? '#9E601A' : '#D38022') : 
                               botName === 'TYG3R' ? (((file + rank) % 2) ? '#307AC5' : '5B99D7') : 
-                              botName === 'ELJEFE' ? (((file + rank) % 2) ? '#9B5FAB' : '#B387C0') : 
+                              botName === 'EL-JEFE' ? (((file + rank) % 2) ? '#9B5FAB' : '#B387C0') : 
                               botName === 'NETRUNNER' ? (((file + rank) % 2) ? '#8F8F8F' : '#A3A3A3') : 
                               (((file + rank) % 2) ? '#69C96E' : '#96D999')) +
               '" width="' + CELL_WIDTH + 'px" height="' + CELL_HEIGHT +  'px" ' +
@@ -2153,11 +2153,11 @@ var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
             let pieceImage;
             if (botName === 'SPHYNX') {
               pieceImage = 'img/sphynx-set/' + (board[square]) + '.webp';
-            } else if (botName === 'BORG') {
+            } else if (botName === 'B_O_R_G') {
               pieceImage = 'img/borg-set/' + (board[square]) + '.webp';
             } else if (botName === 'TYG3R') {
               pieceImage = 'img/tyger-set/' + (board[square]) + '.webp';
-            } else if (botName === 'ELJEFE') {
+            } else if (botName === 'EL-JEFE') {
               pieceImage = 'img/jefe-set/' + (board[square]) + '.webp';
             } else if (botName === 'NETRUNNER') {
               pieceImage = 'img/runner-set/' + (board[square]) + '.webp';
@@ -2175,6 +2175,10 @@ var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
     
     // move piece in GUI
     function movePiece(userSource, userTarget, promotedPiece) {
+      // Check if the game is already over
+      if (isGameOver()) {
+        return;
+      }
       let moveString = coordinates[userSource] +
                        coordinates[userTarget] +
                        promotedPieces[promotedPiece];
