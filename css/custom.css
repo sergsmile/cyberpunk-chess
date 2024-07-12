@@ -43,3 +43,23 @@ body {
 .gold-glow {
   animation: goldGlow 4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
+
+@keyframes redGlow {
+  0% { text-shadow: 0 0 5px red, 0 0 10px red; }
+  50% { text-shadow: 0 0 20px red, 0 0 30px red; }
+  100% { text-shadow: 0 0 5px red, 0 0 10px red; }
+}
+
+.red-glow {
+  animation: redGlow 4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes whiteGlow {
+  0% { text-shadow: 0 0 5px white, 0 0 10px white; }
+  50% { text-shadow: 0 0 20px white, 0 0 30px white; }
+  100% { text-shadow: 0 0 5px white, 0 0 10px white; }
+}
+
+.white-glow {
+  animation: whiteGlow 4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}

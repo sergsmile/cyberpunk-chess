@@ -43,35 +43,61 @@ var userSource, userTarget;
 
 // 3 fold repetitions
 var repetitions = 0;
+
+// snapback
+var draggedPiece = null;
+var draggedPieceSource = null;
   
-// pick piece handler
+
 function dragPiece(event, square) {
   userSource = square;
+  draggedPiece = event.target;
+  draggedPieceSource = square;
+  // Store the original position
+  draggedPiece.originalPosition = { left: draggedPiece.style.left, top: draggedPiece.style.top };
 }
 
-// drag piece handler
 function dragOver(event, square) {
   event.preventDefault();
-  if (square == userSource) event.target.src = 'img/0.webp';
+  if (square == userSource) {
+    event.target.style.opacity = '0.5'; // Make the original square semi-transparent
+  }
 }
 
-// drop piece handler
 function dropPiece(event, square) {
+  event.preventDefault();
   userTarget = square;
   promotedPiece = (engine.getSide() ? (promotedPiece + 6): promotedPiece)
   let valid = validateMove(userSource, userTarget, promotedPiece);  
-  engine.movePiece(userSource, userTarget, promotedPiece);
-  if (engine.getPiece(userTarget) == 0) valid = 0;
-  clickLock = 0;
   
-  if (engine.getPiece(square) && valid) {
-    userTime = Date.now() - userTime;
-    document.getElementById(square).style.backgroundColor = engine.SELECT_COLOR;
-    updatePgn();
+  if (valid) {
+    engine.movePiece(userSource, userTarget, promotedPiece);
+    if (engine.getPiece(userTarget)) {
+      userTime = Date.now() - userTime;
+      document.getElementById(square).style.backgroundColor = engine.SELECT_COLOR;
+      updatePgn();
+    }
+    setTimeout(function() { think(); }, 100);
+  } else {
+    // Snapback the piece to its original position
+    snapBack();
   }
   
-  event.preventDefault();
-  if (valid) setTimeout(function() { think(); }, 100);
+  clickLock = 0;
+  draggedPiece = null;
+  draggedPieceSource = null;
+}
+
+// snapback
+function snapBack() {
+  if (draggedPiece && draggedPieceSource) {
+    let sourceSquare = document.getElementById(draggedPieceSource);
+    draggedPiece.style.position = 'static';
+    draggedPiece.style.left = draggedPiece.originalPosition.left;
+    draggedPiece.style.top = draggedPiece.originalPosition.top;
+    sourceSquare.appendChild(draggedPiece);
+    sourceSquare.style.opacity = '1'; // Restore full opacity
+  }
 }
 
 // click event handler
@@ -101,7 +127,11 @@ function tapPiece(square) {
       updatePgn();
     }
 
-    if (valid) setTimeout(function() { think(); }, 1);
+    if (valid) {
+      setTimeout(function() { think(); }, 1);
+    } else {
+      snapBack();
+    }
   }
 }
 
@@ -418,8 +448,7 @@ function updatePgn() {
 
 // update eddiesCount
 function updateEddies(result) {
-  if (engineSide !== guiSide) {
-    let eddiesIncrease = 0;
+  let eddiesIncrease = 0;
     let resultType = '';
 
   if (result === '1-0') {
@@ -435,24 +464,24 @@ function updateEddies(result) {
     
     switch (botName) {
       case 'SPHYNX':
-        eddiesIncrease = 10;
+        eddiesIncrease = resultType === 'W' ? 10 : resultType === 'D' ? 5 : -1;
         break;
       case 'B_O_R_G':
-        eddiesIncrease = 100;
+        eddiesIncrease = resultType === 'W' ? 100 : resultType === 'D' ? 50 : -10;
         break;
       case 'TYG3R':
-        eddiesIncrease = 250;
+        eddiesIncrease = resultType === 'W' ? 250 : resultType === 'D' ? 125 : -25;
         break;
       case 'EL_JEFE':
-        eddiesIncrease = 350;
+        eddiesIncrease = resultType === 'W' ? 350 : resultType === 'D' ? 175 : -35;
         break;
       case 'NETRUNNER':
-        eddiesIncrease = 600;
+        eddiesIncrease = resultType === 'W' ? 600 : resultType === 'D' ? 300 : -60;
         break;
     }
     
     eddiesCount += eddiesIncrease;
-    console.log(`Eddies increased by ${eddiesIncrease}. Total Eddies: ${eddiesCount}`);
+    console.log(`Eddies changed by ${eddiesIncrease}. Total Eddies: ${eddiesCount}`);
 
     // Store the updated eddiesCount in local storage
     localStorage.setItem('eddiesCount', eddiesCount);
@@ -462,18 +491,26 @@ function updateEddies(result) {
     
     if (eddiesCountElement) {
       eddiesCountElement.textContent = eddiesCount.toString();
-      
+        
+      // Determine the glow class based on the result
+      if (resultType === 'W') {
+        glowClass = 'gold-glow';
+      } else if (resultType === 'D') {
+        glowClass = 'white-glow';
+      } else {
+        glowClass = 'red-glow';
+      }
+        
       // Apply the glowing effect to both label and count
-      eddiesLabelElement.classList.add('gold-glow');
-      eddiesCountElement.classList.add('gold-glow');
-      
+      eddiesLabelElement.classList.add(glowClass);
+      eddiesCountElement.classList.add(glowClass);
+        
       // Remove the class after the animation completes
       setTimeout(() => {
-        eddiesLabelElement.classList.remove('gold-glow');
-        eddiesCountElement.classList.remove('gold-glow');
+        eddiesLabelElement.classList.remove(glowClass);
+        eddiesCountElement.classList.remove(glowClass);
       }, 4000);
     }
-  }
 }
 
 // Initialize eddiesCount from local storage
@@ -533,3 +570,10 @@ setBot('SPHYNX');
 
 // call initEddiesCount when the page loads
 document.addEventListener('DOMContentLoaded', initEddiesCount);
+
+// snapback
+document.addEventListener('dragend', function(event) {
+  if (!event.target.closest('.chess-board')) {
+    snapBack();
+  }
+});
