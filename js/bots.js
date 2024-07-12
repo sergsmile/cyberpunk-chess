@@ -32,7 +32,7 @@ const bots = {
     selectColor: 'pink',
   },
   
-  'EL-JEFE': {
+  'EL_JEFE': {
     image: 'img/jefe.webp',
     description: '',
     time: 0,

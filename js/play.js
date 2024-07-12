@@ -149,9 +149,9 @@ function newGame() {
   engine.setBoard(engine.START_FEN);
   engine.drawBoard();
   engine.updateBoard();
+  engine.randomizePieceSquareTables();
   document.getElementById('pgn').value = '';
   repetitions = 0;
-  engine.randomizePieceSquareTables();
 }
 
 // take move back
@@ -206,6 +206,11 @@ function getBookMove() {
 
 // engine move
 function think() {
+  /*if (gameResult !== '*') {
+    // console.log("Game is already over. Result:", gameResult);
+    return;
+  }*/
+
   if (engine.inCheck(guiSide)) return;
   
   engine.resetTimeControl();
@@ -228,16 +233,16 @@ function think() {
   if (bestMove) {
     bookMoveFlag = 1;
     delayMove = 1000;
+  } else if (bestMove == 0) {
+    bestMove = engine.search(fixedDepth);
   }
-
-  else if (bestMove == 0) bestMove = engine.search(fixedDepth);
   
   let sourceSquare = engine.getMoveSource(bestMove);
   let targetSquare = engine.getMoveTarget(bestMove);
   let promotedPiece = engine.getMovePromoted(bestMove);
 
   if (engine.isRepetition()) repetitions++;
-  if (repetitions == 3) {
+  /*if (repetitions == 3) {
     gameResult = '1/2-1/2 Draw by 3 fold repetition';
     updatePgn();
     return;
@@ -259,6 +264,25 @@ function think() {
     gameResult = 'Stalemate';
     updatePgn();
     return;
+  }*/
+
+  if (repetitions == 3) {
+    gameResult = '1/2-1/2 Draw by 3 fold repetition';
+  } else if (engine.getFifty() >= 100) {
+    gameResult = '1/2-1/2 Draw by 50 rule move';
+  } else if (engine.isMaterialDraw()) {
+    gameResult = '1/2-1/2 Draw by insufficient material';
+  } else if (engine.generateLegalMoves().length == 0) {
+    if (engine.inCheck(engine.getSide())) {
+      gameResult = engine.getSide() == engine.COLOR.WHITE ? '0-1 Mate' : '1-0 Mate';
+    } else {
+      gameResult = 'Stalemate';
+    }
+  }
+
+  if (gameResult != '*') {
+    updatePgn();
+    return;
   }
 
   setTimeout(function() {
@@ -271,11 +295,15 @@ function think() {
       updatePgn();
       userTime = Date.now();
     }
-  
+  // check for checkmate after the move
+  if (engine.inCheck(engine.getSide()) && engine.generateLegalMoves().length === 0) {
+    gameResult = engine.getSide() == engine.COLOR.WHITE ? '0-1 Mate' : '1-0 Mate';
+    updatePgn();
+  }
   }, delayMove + (guiTime < 100 && delayMove == 0) ? 1000 : ((guiDepth == 0) ? 500 : 100));
 }
 
-function getGamePgn() {
+/*function getGamePgn() {
   let moveStack = engine.moveStack();
   let pgn = '';
 
@@ -299,9 +327,9 @@ function getGamePgn() {
   }
 
   return pgn;
-}
+}*/
 
-// update PGN
+/* update PGN
 function updatePgn() {
   let pgn = getGamePgn();
   let gameMoves = document.getElementById('pgn');
@@ -315,12 +343,95 @@ function updatePgn() {
   }
   
   gameMoves.scrollTop = gameMoves.scrollHeight;
+}*/
+
+// get moves in SAN notation
+function getGamePgn() {
+  let moveStack = engine.moveStack();
+  let pgn = '';
+  let sanPiece = [0, 'P', 'N', 'B', 'R', 'Q', 'K', 'P', 'N', 'B', 'R', 'Q', 'K',];
+
+  for (let index = 0; index < moveStack.length; index++) {
+    let move = moveStack[index].move;
+    let movePiece = moveStack[index].piece;
+    let moveInCheck = moveStack[index].inCheck;
+    let moveScore = moveStack[index].score;
+    let moveDepth = moveStack[index].depth;
+    let moveTime = moveStack[index].time;
+    let movePv = moveStack[index].pv;
+    
+    let sourceSquare = engine.getMoveSource(move);
+    let targetSquare = engine.getMoveTarget(move);
+    let piece = sanPiece[movePiece];
+    let check = '';
+    let capture = '';
+    
+    if (piece == 'P') piece = '';
+    if (moveInCheck) check = '+';
+
+    if (engine.getMoveCapture(move)) {
+      if (piece) capture = 'x';
+      else capture = engine.squareToString(sourceSquare)[0] + 'x';
+    }
+    
+    let moveNumber = ((index % 2) ? '': ((index / 2 + 1) + '. '));
+    let moveString = piece + 
+                     capture + 
+                     engine.squareToString(targetSquare) +
+                     check;
+    
+    if (engine.getMoveCastling(move)) {
+      if (moveString == 'Kg1' || moveString == 'Kg8') moveString = '0-0';
+      if (moveString == 'Kc1' || moveString == 'Kc8') moveString = '0-0-0';
+    }
+    
+    let displayScore = (((moveScore / 100) == 0) ? '-0.00' : (moveScore / 100)) + '/' + moveDepth + ' ';
+    if (typeof(moveScore) == 'string') displayScore = '+' + moveScore + '/' + moveDepth + ' ';
+    
+    let stats = (movePv ? '(' + movePv.trim() + ')' + ' ': '') + 
+                (moveDepth ? ((moveScore > 0) ? ('+' + displayScore) : displayScore): '') +
+                Math.round(moveTime / 1000);
+
+    let nextMove = moveNumber + moveString + (moveTime ? ' {' + stats + '}' : '');
+
+    pgn += nextMove + ' ';
+    userTime = 0;      
+  }
+
+  return pgn;
+}
+
+// update PGN
+function updatePgn() {
+  let pgn = getGamePgn();
+  let gameMoves = document.getElementById('pgn');
+  
+  gameMoves.value = pgn;
+  
+  if (gameResult != '*') {
+    gameMoves.value += gameResult.includes('Mate') ? '# ' + gameResult : ' ' + gameResult;
+    updateEddies(gameResult.split(' ')[0]);
+  }
+  
+  gameMoves.scrollTop = gameMoves.scrollHeight;
 }
 
 // update eddiesCount
-function updateEddies(result, engineSide) {
-  if (engineSide !== guiSide) {
+function updateEddies(result) {
+  //if (engineSide !== guiSide) {
     let eddiesIncrease = 0;
+    let resultType = '';
+
+  if (result === '1-0') {
+    resultType = guiSide === 0 ? 'W' : 'L';
+  } else if (result === '0-1') {
+    resultType = guiSide === 1 ? 'W' : 'L';
+  } else if (result.includes('1/2-1/2') || result === 'Stalemate') {
+    resultType = 'D';
+  } else {
+    console.log("Unexpected result:", result);
+    return; // Don't update for unexpected results
+  }
     
     switch (botName) {
       case 'SPHYNX':
@@ -332,7 +443,7 @@ function updateEddies(result, engineSide) {
       case 'TYG3R':
         eddiesIncrease = 250;
         break;
-      case 'EL-JEFE':
+      case 'EL_JEFE':
         eddiesIncrease = 350;
         break;
       case 'NETRUNNER':
@@ -362,7 +473,7 @@ function updateEddies(result, engineSide) {
         eddiesCountElement.classList.remove('gold-glow');
       }, 4000);
     }
-  }
+  // }
 }
 
 // Initialize eddiesCount from local storage
@@ -388,7 +499,7 @@ function downloadPgn() {
 
   let header = '';
   if (guiFen) header += '[FEN "' + guiFen + '"]\n';
-  header += '[Event "Friendly chess game"]\n';
+  header += '[Event "Played on Cyberpunk Chess"]\n';
   header += '[Date "' + new Date() + '"]\n';
   header += '[White "' + ((userColor == 'White') ? userName : botName) + '"]\n';
   header += '[Black "' + ((userColor == 'Black') ? userName : botName) + '"]\n';
@@ -404,12 +515,6 @@ function downloadPgn() {
   downloadLink.remove();
 }
 
-// set promoted piece
-function setPromotion(piece) {
-  document.getElementById('current-promoted-image').src = 'Images/' + piece + '.gif';
-  promotedPiece = piece;
-}
-
 // set bot
 function setBot(bot) {
   botName = bot;
@@ -423,8 +528,8 @@ function setBot(bot) {
   engine.SELECT_COLOR = bots[bot].selectColor;
 }
 
-// Set Wukong as default bot
+// set default bot
 setBot('SPHYNX');
 
-// Call initEddiesCount when the page loads
+// call initEddiesCount when the page loads
 document.addEventListener('DOMContentLoaded', initEddiesCount);

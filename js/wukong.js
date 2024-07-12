@@ -25,7 +25,7 @@ var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
   \****************************/
   
   // chess engine version
-  const version = '1.5a';
+  const version = '1.5a-cyber';
   const elo = '1920';
 
   // sides to move  
@@ -1723,7 +1723,7 @@ var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
     return alpha;
   }
 
-  function isGameOver() {
+  /* function isGameOver() {
     let legalMoves = generateLegalMoves();
     
     if (legalMoves.length === 0) {
@@ -1743,10 +1743,17 @@ var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
     }
     
     return false;
-  }
+  } */
   
   // search position for the best move
   function searchPosition(depth) {
+    /* First, check if the game is already over
+    let gameOverStatus = isGameOver();
+    if (gameOverStatus) {
+      //console.log("Game is already over:", gameOverStatus);
+      return 0; // Return 0 to indicate no move should be made
+    }*/
+
     let start = Date.now();
     let score = 0;
     let lastBestMove = 0;
@@ -1816,19 +1823,18 @@ var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
   
     let bestMove = (timing.stopped == 1) ? lastBestMove : pvTable[0];
   
-    let gameOverStatus = isGameOver();
-    if (!gameOverStatus) {
+    /*if (!gameOverStatus) {
       console.log('bestmove ' + moveToString(bestMove));
     } else {
-      console.log('Game over: ' + gameOverStatus + '. No best move to make.');
+      // console.log('Game over: ' + gameOverStatus + '. No best move to make.');
       // Call a new function to handle game over
       handleGameOver(gameOverStatus);
-    }
+    }*/
     
     return bestMove;
   }
 
-  function handleGameOver(status) {
+  /*function handleGameOver(status) {
     if (updateEddiesCallback) {
       let result;
       if (status === "checkmate") {
@@ -1838,7 +1844,7 @@ var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
       }
       updateEddiesCallback(result, side);
     }
-  }
+  }*/
 
 
   /****************************\
@@ -2126,7 +2132,7 @@ var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
               '" bgcolor="' + (botName === 'SPHYNX' ? (((file + rank) % 2) ? '#69C96E' : '#96D999') : 
                               botName === 'B_O_R_G' ? (((file + rank) % 2) ? '#9E601A' : '#D38022') : 
                               botName === 'TYG3R' ? (((file + rank) % 2) ? '#307AC5' : '5B99D7') : 
-                              botName === 'EL-JEFE' ? (((file + rank) % 2) ? '#9B5FAB' : '#B387C0') : 
+                              botName === 'EL_JEFE' ? (((file + rank) % 2) ? '#9B5FAB' : '#B387C0') : 
                               botName === 'NETRUNNER' ? (((file + rank) % 2) ? '#8F8F8F' : '#A3A3A3') : 
                               (((file + rank) % 2) ? '#69C96E' : '#96D999')) +
               '" width="' + CELL_WIDTH + 'px" height="' + CELL_HEIGHT +  'px" ' +
@@ -2157,7 +2163,7 @@ var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
               pieceImage = 'img/borg-set/' + (board[square]) + '.webp';
             } else if (botName === 'TYG3R') {
               pieceImage = 'img/tyger-set/' + (board[square]) + '.webp';
-            } else if (botName === 'EL-JEFE') {
+            } else if (botName === 'EL_JEFE') {
               pieceImage = 'img/jefe-set/' + (board[square]) + '.webp';
             } else if (botName === 'NETRUNNER') {
               pieceImage = 'img/runner-set/' + (board[square]) + '.webp';
@@ -2175,15 +2181,18 @@ var Engine = function(boardSize, lightSquare, darkSquare, selectColor) {
     
     // move piece in GUI
     function movePiece(userSource, userTarget, promotedPiece) {
-      // Check if the game is already over
-      if (isGameOver()) {
-        return;
-      }
       let moveString = coordinates[userSource] +
                        coordinates[userTarget] +
                        promotedPieces[promotedPiece];
 
       engine.loadMoves(moveString);
+      /* Check if the game is over after this move
+      let gameOverStatus = isGameOver();
+      if (gameOverStatus) {
+        console.log("Game over:", gameOverStatus);
+        handleGameOver(gameOverStatus);
+        return gameOverStatus;
+      }*/
       drawBoard();
       updateBoard();
     }
