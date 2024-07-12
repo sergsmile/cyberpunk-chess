@@ -418,7 +418,7 @@ function updatePgn() {
 
 // update eddiesCount
 function updateEddies(result) {
-  //if (engineSide !== guiSide) {
+  if (engineSide !== guiSide) {
     let eddiesIncrease = 0;
     let resultType = '';
 
@@ -473,7 +473,7 @@ function updateEddies(result) {
         eddiesCountElement.classList.remove('gold-glow');
       }, 4000);
     }
-  // }
+  }
 }
 
 // Initialize eddiesCount from local storage
