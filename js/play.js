@@ -142,18 +142,13 @@ function validateMove(userSource, userTarget, promotedPiece) {
                    engine.promotedToString(promotedPiece);
 
   let move = engine.moveFromString(moveString);
-
-  // Check if it's a king move attempting a capture
-  if (engine.getPiece(userSource) === engine.PIECE.WHITE_KING && 
-  engine.getPiece(userTarget) !== engine.PIECE.NO_PIECE) {
-  // Verify if it's a legal move using the engine's move generation
   let legalMoves = engine.generateLegalMoves();
-  if (!legalMoves.some(m => m.move === move)) {
-      // If it's not a legal move, return false without changing the game state
-      return false;
-    }
-  }
+  let isLegalMove = legalMoves.some(m => m.move === move);
 
+  if (!isLegalMove) {
+    console.log("Illegal move attempted");
+    return false;
+  }
   return move;
 }
 
